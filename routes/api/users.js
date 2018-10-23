@@ -1,5 +1,5 @@
 // Step 3: Develop Route files: user routes and all of our authentication, login, passport
-// To use router we need to bring in express
+// Step 3A: To use router we need to bring in express
 const express = require("express");
 const router = express.Router();
 
@@ -13,6 +13,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
 
+// Step 8C: Bring in Passport
+const passport = require("passport");
+
+// Step 9: Bring in validation
+const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
+
 // @route   GET api/users/test
 // @desc    Tests users route
 // @access  Public
@@ -20,13 +27,21 @@ router.get("/test", (req, res) => {
   res.json({ msg: "Users path works" });
 });
 
-// @route   GET api/users/register (Step 5)
+// Step 5B: Register functionality
+// @route   POST api/users/register
 // @desc    Register user
 // @access  Public
 router.post("/register", (req, res) => {
+  // Step 9C: Check for errors by pulling errors object from validation > register.js
+  const { errors, isValid } = validateRegisterInput(req.body);
+  // return errors if isvalid is false
+  if (!isValid) {
+    return res.status(404).json(errors);
+  }
+
   // looking for a recod that the user is trying to register with
   // to use req.body, we need body parser in server.js
-  // Map the passed in email with saved emails
+  // Map the passed-in email with saved emails
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
       return res.status(400).json({ email: "Email already exists" });
@@ -63,10 +78,18 @@ router.post("/register", (req, res) => {
   });
 });
 
-// @route   GET api/users/login (Step 6: Login functionality)
+// Step 6: Login functionality
+// @route   POST api/users/login (Step 6: Login functionality)
 // @desc    Login user
 // @access  Public
 router.post("/login", (req, res) => {
+  // Step 9D: Check for errors by pulling errors object from validation > login.js
+  const { errors, isValid } = validateLoginInput(req.body);
+  // return errors if isvalid is false
+  if (!isValid) {
+    return res.status(404).json(errors);
+  }
+
   // User will send form which will be in req.body
   const email = req.body.email;
   const password = req.body.password;
@@ -76,13 +99,14 @@ router.post("/login", (req, res) => {
     // Check for user in mongodb by email
     .then(user => {
       if (!user) {
-        res.status(404).json({ email: "User not found." });
+        errors.email = "User not found";
+        res.status(404).json(errors);
       }
       // Compare unhashed password with hashed password to see if password is correct
       bcrypt.compare(password, user.password).then(isMatch => {
         if (isMatch) {
-          //res.json({ msg: "Success" });
-          // User matched. Sign the token (Step 7) sign() will take in payload(user info), key and expiration and return JWT in response
+          // Step 7: Sign the token with sign() which will take in payload(user info), key and expiration and return JWT in response
+          // This creates token. The user is embedded in the token
           const payload = { id: user.id, name: user.name, avatar: user.avatar };
           jwt.sign(
             payload,
@@ -96,10 +120,27 @@ router.post("/login", (req, res) => {
             }
           );
         } else {
-          res.status(400).json({ password: "Password incorrect" });
+          errors.password = "Password incorrect";
+          res.status(400).json(errors);
         }
       });
     });
 });
+
+// @route   POST api/users/quote
+// @desc    Create quote for user
+// @access  Private
+
+// @route   GET api/users/current
+// @desc    Return current user
+// @access  Private
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    // User now in request.user becuase of done() method in passport.js
+    res.json(req.user);
+  }
+);
 
 module.exports = router;

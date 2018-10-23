@@ -1,4 +1,4 @@
-// posts will have routes
+// Step 3: Posts will have routes
 const express = require("express");
 const router = express.Router();
 

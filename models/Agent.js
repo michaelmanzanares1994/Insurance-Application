@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Step 4: Create a Schema and define fields
-const UserSchema = new Schema({
+const AgentSchema = new Schema({
   name: {
     type: String,
     required: true
@@ -25,4 +25,4 @@ const UserSchema = new Schema({
   }
 });
 // Pass in name we want to use, and the actual schema created
-module.exports = User = mongoose.model("users", UserSchema);
+module.exports = Agent = mongoose.model("users", AgentSchema);
