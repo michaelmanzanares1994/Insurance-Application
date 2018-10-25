@@ -1,5 +1,10 @@
 import React, { Component } from "react";
-import axios from "axios";
+import classnames from "classnames";
+import PropTypes from "prop-types";
+import { withRouter } from "react-router-dom";
+
+import { connect } from "react-redux";
+import { registerUser } from "../../actions/authorizeActions";
 
 // each field has to have its own state within the compoenent
 class Register extends Component {
@@ -12,14 +17,22 @@ class Register extends Component {
       password2: "",
       errors: {}
     };
+
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors });
+    }
   }
 
   onChange(event) {
     // to dynamically update component state using constructor bind
     this.setState({ [event.target.name]: event.target.value });
   }
+
   onSubmit(event) {
     event.preventDefault();
 
@@ -31,64 +44,89 @@ class Register extends Component {
       password2: this.state.password2
     };
 
-    //console.log(newAgent);
-    axios
-      .post("/api/users/register", newAgent)
-      .then(res => console.log(res.data))
-      .catch(error => this.setState({ errors: error.response.data }));
+    // call an action
+    this.props.registerUser(newAgent, this.props.history);
   }
+
   render() {
+    const { errors } = this.state;
+    const { user } = this.props.authorize;
+
     return (
       <div className="register">
+        {user ? user.name : null}
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-auto">
               <h1 className="display-4 text-center">Sign Up</h1>
               <p className="lead text-center">Create your Agent account</p>
-              <form onSubmit={this.onSubmit}>
+              <form noValidate onSubmit={this.onSubmit}>
                 <div className="form-group">
                   <input
                     type="text"
-                    className="form-control form-control-lg"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.name
+                    })}
                     placeholder="Name"
                     name="name"
                     value={this.state.name}
                     onChange={this.onChange}
                   />
+                  {errors.name && (
+                    <div className="invalid-feedback">{errors.name} </div>
+                  )}
                 </div>
+
                 <div className="form-group">
                   <input
                     type="email"
-                    className="form-control form-control-lg"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.email
+                    })}
                     placeholder="Email Address"
                     name="email"
                     value={this.state.email}
                     onChange={this.onChange}
                   />
+                  {errors.email && (
+                    <div className="invalid-feedback">{errors.email} </div>
+                  )}
                   <small className="form-text text-muted">
                     This site uses Gravatar so if you want a profile image, use
                     a Gravatar email
                   </small>
                 </div>
+
                 <div className="form-group">
                   <input
                     type="password"
-                    className="form-control form-control-lg"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.password
+                    })}
                     placeholder="Password"
                     name="password"
                     value={this.state.password}
                     onChange={this.onChange}
                   />
+                  {errors.password && (
+                    <div className="invalid-feedback">{errors.password} </div>
+                  )}
                 </div>
+
                 <div className="form-group">
                   <input
                     type="password"
-                    className="form-control form-control-lg"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.password2
+                    })}
                     placeholder="Confirm Password"
                     name="password2"
                     value={this.state.password2}
                     onChange={this.onChange}
                   />
+                  {errors.password2 && (
+                    <div className="invalid-feedback">{errors.password2} </div>
+                  )}
                 </div>
                 <input type="submit" className="btn btn-info btn-block mt-4" />
               </form>
@@ -100,4 +138,20 @@ class Register extends Component {
   }
 }
 
-export default Register;
+// For react any properties in component should be mapped to proptypes because...
+Register.propTypes = {
+  registerUser: PropTypes.func.isRequired,
+  authorize: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
+
+// Gain access of application state within component state. state.authorize comes from root reducer
+const mapStateToProps = state => ({
+  authorize: state.authorize,
+  errors: state.errors
+});
+
+export default connect(
+  mapStateToProps,
+  { registerUser }
+)(withRouter(Register));

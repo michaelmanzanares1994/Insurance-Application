@@ -66,8 +66,52 @@ Step 14: more profile routes
 
 Step 15: create react app
 $ npm i -g create-react-app
-STep : make a react app in client folder
+Step 15a: make a react app in client folder
 $ create-react-app client
+Step 15B: install concurrently and create commands
+$ npm i concurrently
+script: {"dev":"concurrently \"npm run server\" \"npm run client\""}
+
+Step 16: Bring in bootstrap and fontawesome
+
+Step 17: Create layout - header, footer, landing
+
+Step 18: install router in cilent and import browserrouter from react router dom
+
+Step 19: import link from react router dom
+
+Step 20: work on register component, onChange and onSubmit functions
+
+Step 21: Create Login component: render, onChange and onSubmit
+
+Step 22: Axios and check registration use case
+Step 22A: add axios to frontend
+$ npm install axios
+Step 22B:import axios (in register.js)
+
+Step 23: install classnames if (something) add class
+$ npm i classnames
+Step 23a: impport classnames in register.js
+
+Step 24: install
+$ npm i redux react-redux redux-thunk
+
+Step 25: import provider in app.js and wrap around router
+
+step 26: create store.js
+
+STREATE 27: create reducer folder and authReducer
+
+Step 28: create actions folder to verify register
+: create setAthorizeToken.js
+
+Step 29: set user using token
+
+step 31: install jwt-decode in client folder
+
+: create front end validation isempty
+
+: create errors reducer for redux registration flow
 
 # =======================================================================================================
 

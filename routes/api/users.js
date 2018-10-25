@@ -36,7 +36,7 @@ router.post("/register", (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
   // return errors if isvalid is false
   if (!isValid) {
-    return res.status(404).json(errors);
+    return res.status(400).json(errors);
   }
 
   // looking for a recod that the user is trying to register with
