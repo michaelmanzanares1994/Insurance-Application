@@ -1,4 +1,4 @@
-// This file takes care of adding the authorization token
+// This file takes care of adding the token to the authorization header for local storage
 import axios from "axios";
 
 const setAuthorizeToken = token => {

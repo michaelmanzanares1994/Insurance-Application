@@ -113,7 +113,37 @@ step 31: install jwt-decode in client folder
 
 : create errors reducer for redux registration flow
 
-# =======================================================================================================
+: install jwt-decode in client folder to extract user from token
+
+:set authorize token in utilities
+
+: login user action and setcurrentuser reducer
+
+: set isAuthenticated
+
+: create logout functionality (in authorizeactions)
+
+: prevent unwanted navigation in landing, signup and login
+
+: create test field groups and other files in common folder
+
+: create action types
+
+: create profile actions
+
+: create profile reducers
+
+: create clear current user and include it in app.js and navbar
+
+: create dashboard and add profile to state
+
+: bring in profile state and authorize state to dashboard
+
+: create input types (common folder)
+#=======================================================================================================
+BUG LOG
+when updatding user handle in edit profile dashboard continues to load
+#=======================================================================================================
 
 # Insurance Application Design
 
@@ -127,8 +157,6 @@ Transaction Page will have Customers Details, Vechicle Details, Coverage Details
 On Form Submit, Coverage Package Details will be calculated
 If New Buisness, there will be Bind Details as well
 If Finished Policy, Transaction Summay will dispaly
-
----
 
 ## Design Walkthrough by Component
 
